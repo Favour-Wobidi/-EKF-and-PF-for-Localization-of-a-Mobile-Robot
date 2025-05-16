@@ -2,7 +2,24 @@
 
 The objective of the practical work is to understand how the Extended Kalman Filter (EKF) and the Particle Filter (PF) work for localizing a mobile robot and to develop an implementation of each. 
 
+---
 
+## Repository Structure
+
+```
+├── README.md            # (this file)
+├── localization.py      # Main entry point for running single-run experiments
+├── ekf.py               # Extended Kalman Filter implementation
+├── pf.py                # Particle Filter implementation
+├── utils.py             # Helper functions and plotting utilities
+├── soccer_field.py      # Environment dynamics and observation models
+├── policies.py          # Motion policies for the robot
+├── ekf_experiments.py   # Batch script for EKF experiments (parts b & c)
+├── pf_experiments.py    # Batch script for PF experiments (parts b, c & d)
+└── t4.pdf       # Assignment specification and theoretical exercises
+```
+
+---
 
 ## How to Run the Experiments
 
