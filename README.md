@@ -86,7 +86,7 @@ matplotlib
 
 This script evaluates the performance of the Extended Kalman Filter (EKF) under varying noise conditions.
 
-### EKF Experiments (parts b & c)
+### EKF Experiments (parts a & b)
 
 **Output:**
 
@@ -99,12 +99,12 @@ This script evaluates the performance of the Extended Kalman Filter (EKF) under 
 
 -   Generates:
 
-    -   `ekf_part_b_all_metrics.png`
+    -   `ekf_part_a_all_metrics.png`
     -   Individual metric plots:
 
-        -   `ekf_part_b_mean_position_error.png`
-        -   `ekf_part_b_mean_mahalanobis_error.png`
-        -   `ekf_part_b_anees.png`
+        -   `ekf_part_a_mean_position_error.png`
+        -   `ekf_part_a_mean_mahalanobis_error.png`
+        -   `ekf_part_a_anees.png`
 
 Batch-run EKF experiments under two modes:
 
@@ -154,11 +154,23 @@ python ekf_experiments.py --mode c
 
 **Tip:** Ensure all dependencies are installed (`numpy`, `matplotlib`).
 
-### PF Experiments (parts b, c & d)
+### PF Experiments (parts a, b & c)
 
 Batch-run PF experiments under three modes:
 
 -   **Part B**: Vary both measurement and filter noise:
+
+    ```bash
+    python pf_experiments.py --mode a
+    ```
+
+    **Output:**
+
+    -   `pf_part_a_pos_error.png`
+    -   `pf_part_a_mahal_error.png`
+    -   `pf_part_a_anees.png`
+
+-   **Part C**: Vary only the filter noise:
 
     ```bash
     python pf_experiments.py --mode b
@@ -170,22 +182,10 @@ Batch-run PF experiments under three modes:
     -   `pf_part_b_mahal_error.png`
     -   `pf_part_b_anees.png`
 
--   **Part C**: Vary only the filter noise:
-
-    ```bash
-    python pf_experiments.py --mode c
-    ```
-
-    **Output:**
-
-    -   `pf_part_c_pos_error.png`
-    -   `pf_part_c_mahal_error.png`
-    -   `pf_part_c_anees.png`
-
 -   **Part D**: Vary measurement/filter noise and number of particles (`[20, 50, 500]`):
 
     ```bash
-    python pf_experiments.py --mode d
+    python pf_experiments.py --mode c
     ```
 
     **Output:**
