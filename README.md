@@ -1,12 +1,14 @@
-# EKF and PF for Localization of a Mobile Robot
+# EKF & PF Localization Experiments
 
-The objective of the practical work is to understand how the Extended Kalman Filter (EKF) and the Particle Filter (PF) work for localizing a mobile robot and to develop an implementation of each. 
+This repository contains Python implementations of the Extended Kalman Filter (EKF) and Particle Filter (PF) for mobile robot localization in a simulated soccer field environment. It also includes experiment scripts to evaluate filter performance across varying noise levels and particle counts.
 
 ---
 
 ## Repository Structure
 
 ```
+├── Dockerfile
+├── requirements.txt
 ├── README.md            # (this file)
 ├── localization.py      # Main entry point for running single-run experiments
 ├── ekf.py               # Extended Kalman Filter implementation
@@ -16,86 +18,241 @@ The objective of the practical work is to understand how the Extended Kalman Fil
 ├── policies.py          # Motion policies for the robot
 ├── ekf_experiments.py   # Batch script for EKF experiments (parts b & c)
 ├── pf_experiments.py    # Batch script for PF experiments (parts b, c & d)
-└── t4.pdf       # Assignment specification and theoretical exercises
+└── assignment.pdf       # Assignment specification and theoretical exercises
 ```
 
 ---
 
-## How to Run the Experiments
+## Prerequisites
 
-This project contains scripts to run EKF and PF localization experiments based on different noise scaling factors. Below are instructions for running each set of experiments.
+-   **Python 3.7+**
+-   **pip**
+-   **Docker** (optional but recommended for reproducibility)
 
-### Prerequisites
+External Python dependencies are listed in `requirements.txt`:
 
-Ensure you have Python 3 installed, along with the required libraries:
-
-```bash
-pip install numpy matplotlib
+```text
+numpy
+matplotlib
 ```
 
-Make sure `localization.py` exists in the same directory and is properly implemented to accept the expected arguments.
+---
+
+## Local (non-Docker) Setup
+
+1. **Clone** the repository and navigate into it:
+
+    ```bash
+    git clone https://github.com/malikdanialahmed/EKF-PF.git
+    cd EKF-PF
+    ```
+
+2. **Create** and **activate** a virtual environment (optional but recommended):
+
+    ```bash
+    python -m venv venv
+    source venv/bin/activate       # macOS / Linux
+    venv\\Scripts\\activate      # Windows PowerShell
+    ```
+
+3. **Install** dependencies:
+
+    ```bash
+    pip install --upgrade pip
+    pip install -r requirements.txt
+    ```
+
+4. **Run** single localization experiments:
+
+    ```bash
+    # No filter, just ground-truth path:
+    python localization.py none --plot
+
+    # EKF filter:
+    python localization.py ekf --plot
+
+    # PF filter:
+    python localization.py pf --plot
+
+    # Show all available flags:
+    python localization.py -h
+    ```
 
 ---
+
+## Experiment Scripts
 
 ### EKF Experiments
 
-Run experiments for part **b** or **c** using:
+This script evaluates the performance of the Extended Kalman Filter (EKF) under varying noise conditions.
 
-```bash
-python ekf_experiments.py --mode b
-```
+### EKF Experiments (parts b & c)
 
-or
+**Output:**
+
+-   Runs `localization.py` multiple times with different random seeds
+-   Computes:
+
+    -   Mean position error
+    -   Mahalanobis error
+    -   ANEES
+
+-   Generates:
+
+    -   `ekf_part_b_all_metrics.png`
+    -   Individual metric plots:
+
+        -   `ekf_part_b_mean_position_error.png`
+        -   `ekf_part_b_mean_mahalanobis_error.png`
+        -   `ekf_part_b_anees.png`
+
+Batch-run EKF experiments under two modes:
+
+-   **Part B**: Vary both measurement and filter noise factors (`r`) over `[1/64, 1/16, 1/4, 4, 16, 64]`:
+
+    ```bash
+    python ekf_experiments.py --mode b
+    ```
+
+    **Output:**
+
+    -   `ekf_part_b_all_metrics.png`
+    -   `ekf_part_b_mean_position_error.png`
+    -   `ekf_part_b_mean_mahalanobis_error.png`
+    -   `ekf_part_b_anees.png`
+
+-   **Part C**: Vary only the filter noise (keeping data noise at default):
+
+    ```bash
+    python ekf_experiments.py --mode c
+    ```
+
+    **Output:**
+
+    -   `ekf_part_c_all_metrics.png`
+    -   `ekf_part_c_mean_position_error.png`
+    -   `ekf_part_c_mean_mahalanobis_error.png`
+    -   `ekf_part_c_anees.png`
+
+#### Part C: Vary only the filter noise (keeping measurement noise fixed)
 
 ```bash
 python ekf_experiments.py --mode c
 ```
 
-This will:
+**Output:**
 
-* Run the EKF localization multiple times for each `r` value.
-* Generate and save plots for:
+-   Same metrics as Part B
+-   Generates:
 
-  * Mean Position Error
-  * Mean Mahalanobis Error
-  * ANEES
+    -   `ekf_part_c_all_metrics.png`
+    -   Individual metric plots:
+
+        -   `ekf_part_c_mean_position_error.png`
+        -   `ekf_part_c_mean_mahalanobis_error.png`
+        -   `ekf_part_c_anees.png`
+
+**Tip:** Ensure all dependencies are installed (`numpy`, `matplotlib`).
+
+### PF Experiments (parts b, c & d)
+
+Batch-run PF experiments under three modes:
+
+-   **Part B**: Vary both measurement and filter noise:
+
+    ```bash
+    python pf_experiments.py --mode b
+    ```
+
+    **Output:**
+
+    -   `pf_part_b_pos_error.png`
+    -   `pf_part_b_mahal_error.png`
+    -   `pf_part_b_anees.png`
+
+-   **Part C**: Vary only the filter noise:
+
+    ```bash
+    python pf_experiments.py --mode c
+    ```
+
+    **Output:**
+
+    -   `pf_part_c_pos_error.png`
+    -   `pf_part_c_mahal_error.png`
+    -   `pf_part_c_anees.png`
+
+-   **Part D**: Vary measurement/filter noise and number of particles (`[20, 50, 500]`):
+
+    ```bash
+    python pf_experiments.py --mode d
+    ```
+
+    **Output:**
+
+    -   `pf_part_d_pos_error.png`
+    -   `pf_part_d_anees.png`
 
 ---
 
-### PF Experiments
+## Docker Setup
 
-Run experiments for part **b**, **c**, or **d** using:
+A Docker image ensures a consistent environment across platforms.
 
-```bash
-python pf_experiments.py --mode b
-```
+1. **Build the image** (bash / PowerShell):
 
-```bash
-python pf_experiments.py --mode c
-```
+    ```bash
+    docker build -t ekf_pf_suite:latest .
+    ```
 
-```bash
-python pf_experiments.py --mode d
-```
+2. **Run** the container:
 
-* **Mode b** and **c**: Similar to EKF, these will test the Particle Filter with different noise scaling factors.
-* **Mode d**: Tests with different particle counts (`20`, `50`, `500`).
+    - **Default (PF experiments)**:
 
-Each run will:
+        ```bash
+        docker run --rm ekf_pf_suite:latest
+        ```
 
-* Execute `localization.py` using subprocess.
-* Run multiple trials (default: 10).
-* Generate and save plots for:
+    - **EKF experiments**:
 
-  * Mean Position Error
-  * Mean Mahalanobis Error
-  * ANEES
+        ```bash
+        docker run --rm ekf_pf_suite:latest python ekf_experiments.py --mode b
+        ```
+
+    - **Specify mode interactively**:
+
+        ```bash
+        docker run --rm ekf_pf_suite:latest python pf_experiments.py --mode d
+        ```
+
+    - **Mount a host directory** for results/logs:
+
+        ```bash
+        # macOS/Linux
+        docker run --rm -v "$(pwd)/results:/app/results" ekf_pf_suite:latest
+
+        # Windows PowerShell
+        docker run --rm -v ${PWD}\\results:/app/results ekf_pf_suite:latest
+        ```
+
+    All generated plots will appear in the mounted `./results` folder on your host.
 
 ---
 
-### Output
+## Customization & Development
 
-All plots will be saved as PNG files in the working directory:
+-   To debug inside the container, change the last line in `Dockerfile` to use an interactive shell:
 
-* `ekf_part_b_mean_position_error.png`, etc.
-* `pf_part_d_anees.png`, etc.
+    ```dockerfile
+    ENTRYPOINT ["bash", "-lc"]
+    ```
+
+    then rebuild and run:
+
+    ```bash
+    docker run --rm -it ekf_pf_suite:latest
+    ```
+
+    You can now manually invoke any script (e.g., `python localization.py ekf --plot`).
+
+-   To adjust filter parameters, edit the `alphas` and `beta` defaults in `localization.py`.
